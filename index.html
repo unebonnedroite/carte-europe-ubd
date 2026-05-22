@@ -662,8 +662,9 @@
       <hr class="tt-divider">
       <div class="tt-scrutin" style="font-style:italic">Pas de données pour cette sélection</div>`;
 
-    const refType = currentScrutin === 'tout' ? result.partis[0].type : currentScrutin;
-    const refYear = result.partis[0].year;
+    const mostRecent = result.partis.reduce((a, b) => b.year > a.year ? b : a);
+    const refType = currentScrutin === 'tout' ? mostRecent.type : currentScrutin;
+    const refYear = mostRecent.year;
 
     const partisHTML = result.partis.map(p => `
       <div class="tt-parti">
