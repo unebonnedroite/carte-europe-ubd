@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carte Europe — Une Bonne Droite</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- D3 + TopoJSON (prêts pour étape 2) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:        #0A0A1A;
+      --amber-dim: #7A5500;
+      --amber-mid: #C48A00;
+      --amber:     #F5B800;
+      --gold:      #FFD700;
+      --text-dim:  #555577;
+      --text-muted:#888899;
+      --border:    rgba(245,184,0,0.3);
+      --font:      'Space Grotesk', system-ui, -apple-system, sans-serif;
+      --mono:      'Space Grotesk', 'Courier New', monospace;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: #ccc;
+      font-family: var(--font);
+    }
+
+    /* ── Conteneur principal ── */
+    #app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+    }
+
+    /* Vignette subtile sur les bords */
+    #app::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 85% 85% at 50% 48%,
+        transparent 60%,
+        rgba(0,0,0,0.55) 100%
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── Zone carte SVG ── */
+    #map-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #map-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ── Légende — bas gauche ── */
+    #legend {
+      position: absolute;
+      bottom: 36px;
+      left: 22px;
+      z-index: 20;
+      line-height: 1.7;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--amber);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      background: rgba(10,10,26,0.7);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    #legend .legend-title {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    #legend .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #legend .legend-swatch {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    /* ── Sélecteurs — bas droite ── */
+    #selectors {
+      position: absolute;
+      bottom: 36px;
+      right: 26px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .selector-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--amber);
+    }
+
+    .selector-label {
+      color: var(--text-muted);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .selector-row select {
+      background: rgba(10,10,26,0.85);
+      border: 1px solid var(--border);
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23F5B800'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      background-size: 8px 5px;
+      transition: border-color 150ms;
+    }
+
+    .selector-row select:hover,
+    .selector-row select:focus {
+      border-color: var(--amber);
+      background-color: rgba(245,184,0,0.06);
+    }
+
+    .selector-row select option {
+      background: #0d0d20;
+      color: var(--amber);
+    }
+
+    /* ── Tooltip ── */
+    #tooltip {
+      position: absolute;
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 150ms ease;
+      min-width: 220px;
+      max-width: 320px;
+      background: rgba(10,10,26,0.92);
+      border: 1px solid var(--amber);
+      padding: 12px 14px;
+      font-size: 11.5px;
+      line-height: 1.6;
+      backdrop-filter: blur(6px);
+      color: #ccc;
+    }
+
+    #tooltip.visible {
+      opacity: 1;
+    }
+
+    #tooltip .tt-header {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    #tooltip .tt-scrutin {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    #tooltip .tt-divider {
+      border: none;
+      border-top: 1px solid rgba(245,184,0,0.25);
+      margin: 7px 0;
+    }
+
+    #tooltip .tt-parti {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 3px;
+    }
+
+    #tooltip .tt-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    #tooltip .tt-sigle {
+      font-weight: 600;
+      color: #e0e0f0;
+      min-width: 36px;
+    }
+
+    #tooltip .tt-name {
+      color: var(--text-muted);
+      flex: 1;
+      font-size: 10.5px;
+    }
+
+    #tooltip .tt-score {
+      color: var(--amber);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #tooltip .tt-total {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+
+    #tooltip .tt-statut {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    #tooltip .tt-note {
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Note éditoriale — sous les sélecteurs ── */
+    #editorial-note {
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      text-align: right;
+      pointer-events: none;
+      margin-top: 2px;
+    }
+
+    /* ── Animation pulsation pays 50%+ ── */
+    @keyframes glow-pulse {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(255,215,0,0.5)); }
+      50%       { filter: drop-shadow(0 0 12px rgba(255,215,0,0.9)) drop-shadow(0 0 24px rgba(255,215,0,0.4)); }
+    }
+
+    .country-pulse {
+      animation: glow-pulse 2s ease-in-out infinite;
+    }
+
+    /* ── Placeholder centré (visible avant chargement carte) ── */
+    #placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    #placeholder .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--amber-dim);
+      border-radius: 50%;
+      animation: glow-pulse 1.4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Carte SVG (alimentée par D3 à l'étape 2) -->
+  <div id="map-container">
+    <svg id="map-svg"></svg>
+    <div id="placeholder">
+      <div class="pulse-dot"></div>
+      Chargement de la carte…
+    </div>
+  </div>
+
+  <!-- Légende fixe bas gauche -->
+  <div id="legend">
+    <div class="legend-title">Forces électorales anti-immigration</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#FFD700; box-shadow:0 0 6px rgba(255,215,0,0.8);"></span> Majorité / Au pouvoir</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#D4820A;"></span> Aux portes du pouvoir</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#7A5500;"></span> Minoritaire</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#3D2B00;"></span> Marginal</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#1A1A2E; border-color:rgba(255,255,255,0.2);"></span> Absent / non documenté</div>
+  </div>
+
+  <!-- Sélecteurs bas droite -->
+  <div id="selectors">
+    <div class="selector-row">
+      <span class="selector-label">Année</span>
+      <select id="sel-annee">
+        <option value="2026" selected>2026</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2019">2019</option>
+        <option value="2015">2015</option>
+        <option value="2009">2009</option>
+      </select>
+    </div>
+    <div class="selector-row">
+      <span class="selector-label">Mode de scrutin</span>
+      <select id="sel-scrutin">
+        <option value="tout" selected>Tout</option>
+        <option value="europeen">Européen</option>
+        <option value="legislatif">Législatif</option>
+        <option value="presidentiel">Présidentiel</option>
+      </select>
+    </div>
+    <div id="editorial-note">Données électorales officielles — Une Bonne Droite · 2026</div>
+  </div>
+
+  <!-- Tooltip -->
+  <div id="tooltip"></div>
+
+</div>
+
+<script>
+(function () {
+
+  /* ══════════════════════════════════════════════
+     Whitelist : pays européens uniquement
+     Russie (643), Turquie (792), Asie, Afrique → exclus
+  ══════════════════════════════════════════════ */
+  const EUROPE_IDS = new Set([
+    8,   // Albanie
+    20,  // Andorre
+    40,  // Autriche
+    56,  // Belgique
+    70,  // Bosnie-Herzégovine
+    100, // Bulgarie
+    112, // Biélorussie
+    191, // Croatie
+    196, // Chypre
+    203, // Tchéquie
+    208, // Danemark
+    233, // Estonie
+    246, // Finlande
+    250, // France
+    276, // Allemagne
+    300, // Grèce
+    336, // Vatican
+    348, // Hongrie
+    372, // Irlande
+    380, // Italie
+    428, // Lettonie
+    438, // Liechtenstein
+    440, // Lituanie
+    442, // Luxembourg
+    470, // Malte
+    492, // Monaco
+    498, // Moldavie
+    499, // Monténégro
+    528, // Pays-Bas
+    578, // Norvège
+    616, // Pologne
+    620, // Portugal
+    642, // Roumanie
+    674, // Saint-Marin
+    688, // Serbie
+    703, // Slovaquie
+    705, // Slovénie
+    724, // Espagne
+    752, // Suède
+    756, // Suisse
+    804, // Ukraine
+    807, // Macédoine du Nord
+    826, // Royaume-Uni
+    926, // Kosovo
+  ]);
+
+  /* ── ISO alpha-2 ↔ numeric ── */
+  const ISO2_TO_NUM = {
+    FR:250, DE:276, GB:826, IT:380, AT:40,  CH:756, NL:528,
+    SE:752, BE:56,  HU:348, ES:724, PL:616, DK:208, NO:578,
+    FI:246, RO:642, EE:233, GR:300, HR:191, SK:703,
+    PT:620, CZ:203, LV:428, LT:440, SI:705, RS:688, UA:804,
+    BY:112, MK:807, AL:8,   BA:70,  ME:499, MD:498,
+    LU:442, IE:372, BG:100, CY:196, LI:438, XK:926
+  };
+  const NUM_TO_ISO2 = Object.fromEntries(
+    Object.entries(ISO2_TO_NUM).map(([k, v]) => [v, k])
+  );
+
+  /* ── Dimensions ── */
+  let W = window.innerWidth;
+  let H = window.innerHeight;
+
+  /* ── SVG ── */
+  const svg = d3.select('#map-svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs');
+  defs.append('clipPath').attr('id', 'clip-map')
+    .append('rect').attr('width', W).attr('height', H);
+
+  const g = svg.append('g').attr('clip-path', 'url(#clip-map)');
+  const graticuleLayer = g.append('g');
+  const landLayer      = g.append('g').attr('id', 'land-layer');
+
+  /* Coins : Islande (NW) — Ukraine (E) — Grèce/Chypre (S) */
+  const EUROPE_REF = {
+    type: 'Feature',
+    geometry: {
+      type: 'MultiPoint',
+      coordinates: [[-12, 34], [38, 34], [38, 67], [-12, 67]]
+    }
+  };
+
+  function makeProjection(w, h) {
+    /* Marges réduites = carte plus grande */
+    const px = Math.max(40, w * 0.045);
+    const py = Math.max(22, h * 0.04);
+    return d3.geoAzimuthalEqualArea()
+      .rotate([-13, -52, 0])
+      .fitExtent([[px, py], [w - px, h - py - 18]], EUROPE_REF)
+      .clipExtent([[0, 0], [w, h]]);
+  }
+
+  let proj   = makeProjection(W, H);
+  let pathFn = d3.geoPath().projection(proj);
+
+  /* Graticule 10° — ambiance technique, très discret */
+  const graticuleEl = graticuleLayer.append('path')
+    .datum(d3.geoGraticule().step([10, 10])())
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(160,180,255,0.04)')
+    .attr('stroke-width', 0.5)
+    .attr('d', pathFn);
+
+  let worldCache = null;
+
+  /* Supprime les micro-polygones et les îles hors zone européenne */
+  function dropTinyPolygons(feature) {
+    const geom = feature.geometry;
+    if (!geom || geom.type !== 'MultiPolygon') return feature;
+    const kept = geom.coordinates.filter(coords => {
+      const tmp = { type: 'Feature', geometry: { type: 'Polygon', coordinates: coords } };
+      if (pathFn.area(tmp) < 22) return false;           /* trop petite */
+      const [lon, lat] = d3.geoCentroid(tmp);
+      if (lon < -19) return false;  /* trop à l'ouest : Açores (-28°), etc. */
+      if (lat <  32) return false;  /* trop au sud   : Canaries (28°N), etc. */
+      return true;
+    });
+    if (kept.length === 0) return feature;
+    return { ...feature, geometry: { type: 'MultiPolygon', coordinates: kept } };
+  }
+
+  function render() {
+    if (!worldCache) return;
+
+    const allFeatures  = topojson.feature(worldCache, worldCache.objects.countries).features;
+
+    /* Pays européens seulement, micro-îles filtrées */
+    const euroFeatures = allFeatures
+      .filter(d => EUROPE_IDS.has(+d.id))
+      .map(dropTinyPolygons);
+
+    /* Fill + stroke sur le même path filtré → zéro contour fantôme */
+    landLayer.selectAll('path')
+      .data(euroFeatures, d => d.id)
+      .join('path')
+        .attr('class', 'country')
+        .attr('data-num',  d => d.id)
+        .attr('data-iso2', d => NUM_TO_ISO2[+d.id] || '')
+        .attr('d', pathFn)
+        .attr('fill', '#0D0D22')
+        .attr('stroke', 'rgba(255,255,255,0.55)')
+        .attr('stroke-width', 0.6)
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round');
+
+    document.getElementById('placeholder').style.display = 'none';
+    window._ubdInit?.();
+  }
+
+  /* 50m = bien plus réaliste qu'110m (Islande, fjords norvégiens, etc.) */
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
+    .then(world => { worldCache = world; render(); })
+    .catch(() => {
+      document.getElementById('placeholder').textContent = 'Erreur chargement carte.';
+    });
+
+  window.addEventListener('resize', () => {
+    W = window.innerWidth; H = window.innerHeight;
+    svg.attr('width', W).attr('height', H);
+    svg.select('#clip-map rect').attr('width', W).attr('height', H);
+    proj   = makeProjection(W, H);
+    pathFn = d3.geoPath().projection(proj);
+    graticuleEl.attr('d', pathFn);
+    render();
+  });
+
+  window._ubd = {
+    NUM_TO_ISO2, ISO2_TO_NUM, EUROPE_IDS,
+    getProj: () => proj, getPath: () => pathFn
+  };
+})();
+</script>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   DONNÉES + INTERACTION — UBD Carte Europe
+   Étapes 3-4-6-7-9 du PRD
+════════════════════════════════════════════════════════════ */
+(function () {
+
+  /* ── 1. Données embarquées ── */
+  const UBD_DATA = {"meta":{"projet":"Une Bonne Droite — Carte de la résistance à la libre circulation des personnes en Europe","version":"2.1","date":"Mai 2026","methodologie_presidentielle":"Score affiché = T1 uniquement. T2_duel = note contextuelle, jamais additionné au total."},"pays":[{"code":"FR","nom":"France","statut":"opposition","note":"RN 1er parti de France. Présidentielle 2022 : Le Pen 41,5% au second tour face à Macron. Reconquête émergent depuis 2021.","partis":[{"sigle":"RN","nom":"Rassemblement National","couleur":"#003189","statut_grille":"inclus","scores":{"europeen":{"2024":31.4,"2019":23.3,"2014":24.9,"2009":6.3},"legislatif":{"2024":33.2,"2022":18.7,"2017":13.2},"presidentiel":{"2022":{"score":23.1,"type":"T1"},"2022_T2":{"score":41.5,"type":"T2_duel","note":"Le Pen vs Macron — reports partiels depuis Reconquête"},"2017":{"score":21.3,"type":"T1"},"2017_T2":{"score":33.9,"type":"T2_duel","note":"Le Pen vs Macron"},"2012":{"score":17.9,"type":"T1"}}}},{"sigle":"RCQ","nom":"Reconquête","couleur":"#1B4D8E","statut_grille":"inclus","scores":{"europeen":{"2024":5.5},"legislatif":{"2024":5.0,"2022":4.2},"presidentiel":{"2022":{"score":7.1,"type":"T1","note":"Zemmour — pas présent au T2, reports massifs vers RN"}}}}]},{"code":"DE","nom":"Allemagne","statut":"opposition","note":"Fondé 2013. Cordon sanitaire de tous les autres partis (Brandmauer). Thüringen 2024 : 32,8% (1er parti). 2e force au Bundestag 2025.","partis":[{"sigle":"AfD","nom":"Alternative für Deutschland","couleur":"#009DE0","statut_grille":"inclus","scores":{"europeen":{"2024":15.9,"2019":11.0,"2014":7.1},"legislatif":{"2025":20.8,"2021":10.3,"2017":12.6},"presidentiel":{}}}]},{"code":"GB","nom":"Royaume-Uni","statut":"opposition","note":"Hors UE depuis 2020. 14,3% en 2024 = 3e score national, seulement 5 sièges (scrutin uninominal). UKIP précurseur. Restore Britain : émergent, 100% dans un seul comté en 2025.","partis":[{"sigle":"UKIP","nom":"UK Independence Party (précurseur)","couleur":"#70147A","statut_grille":"inclus","scores":{"europeen":{"2014":26.6,"2009":16.1},"legislatif":{"2015":12.6,"2010":3.1},"presidentiel":{}}},{"sigle":"REFUK","nom":"Reform UK","couleur":"#12B6CF","statut_grille":"inclus","scores":{"europeen":{},"legislatif":{"2024":14.3,"2019":2.0},"presidentiel":{}}}]},{"code":"IT","nom":"Italie","statut":"pouvoir","depuis":2022,"note":"Meloni PM depuis 2022. Lega en chute après le pic de 2019 — transfert d'électorat vers FdI. Cas de substitution interne.","partis":[{"sigle":"FdI","nom":"Fratelli d'Italia","couleur":"#0D5C8A","statut_grille":"inclus","scores":{"europeen":{"2024":28.9,"2019":6.4,"2014":3.7,"2009":6.5},"legislatif":{"2022":26.0,"2018":4.4,"2013":1.9},"presidentiel":{}}},{"sigle":"Lega","nom":"Lega","couleur":"#009246","statut_grille":"inclus","scores":{"europeen":{"2024":9.1,"2019":34.3,"2014":6.2,"2009":10.2},"legislatif":{"2022":8.8,"2018":17.4,"2013":4.1},"presidentiel":{}}}]},{"code":"AT","nom":"Autriche","statut":"opposition","note":"1er parti NRW 2024 (28,8%) mais exclu de la coalition — cordon sanitaire autrichien. Sondages 2026 : 34%. Record historique absolu.","partis":[{"sigle":"FPÖ","nom":"Freiheitliche Partei Österreichs","couleur":"#005B99","statut_grille":"inclus","scores":{"europeen":{"2024":25.4,"2019":17.2,"2014":19.7,"2009":12.7},"legislatif":{"2024":28.8,"2019":16.2,"2017":26.0,"2013":20.5},"presidentiel":{"2022":{"score":19.7,"type":"T1"},"2016":{"score":35.1,"type":"T1"},"2016_T2":{"score":46.2,"type":"T2_duel","note":"Hofer vs Van der Bellen — résultat annulé puis reconfirmé 53,8% Van der Bellen"}}}}]},{"code":"CH","nom":"Suisse","statut":"gouvernement","note":"Hors UE. 1er parti suisse depuis 20 ans. A imposé sa ligne immigration à tout le paysage politique suisse. Sondages 2026 : ~30%. Cas hégémonique.","partis":[{"sigle":"SVP","nom":"Union Démocratique du Centre (SVP/UDC)","couleur":"#3B7D23","statut_grille":"inclus","scores":{"europeen":{},"legislatif":{"2023":27.9,"2019":25.6,"2015":29.4,"2011":26.6},"presidentiel":{}}}]},{"code":"NL","nom":"Pays-Bas","statut":"coalition","depuis":2024,"note":"Wilders au pouvoir dans la coalition Schoof (2024). Victoire historique 2023 : doublement du score. Score européennes 2019 bas = boycott partiel.","partis":[{"sigle":"PVV","nom":"Partij voor de Vrijheid","couleur":"#003082","statut_grille":"inclus","scores":{"europeen":{"2024":17.9,"2019":3.5,"2014":13.3,"2009":17.0},"legislatif":{"2023":23.5,"2021":10.8,"2017":13.1,"2012":10.1,"2010":15.5},"presidentiel":{}}}]},{"code":"SE","nom":"Suède","statut":"soutien","note":"2e parti suédois. Soutient le gouvernement Kristersson (Tidö Agreement) sans en faire partie — influence directe sur politique migratoire. Recul aux européennes 2024 vs législatives.","partis":[{"sigle":"SD","nom":"Sverigedemokraterna","couleur":"#FFCD00","statut_grille":"inclus","scores":{"europeen":{"2024":13.2,"2019":15.3,"2014":9.7,"2009":3.3},"legislatif":{"2022":20.5,"2018":17.5,"2014":12.9,"2010":5.7},"presidentiel":{}}}]},{"code":"BE","nom":"Belgique","statut":"opposition","note":"Scores sur collège flamand uniquement. 1er parti de Flandre aux européennes 2024. Cordon sanitaire maintenu. A connu un effondrement 2010-2018 dû à la N-VA, puis renaissance spectaculaire.","partis":[{"sigle":"VB","nom":"Vlaams Belang","couleur":"#FFD700","statut_grille":"inclus","scores":{"europeen":{"2024":23.1,"2019":11.0,"2014":5.9,"2009":15.3},"legislatif":{"2024":21.8,"2019":18.5,"2014":5.9,"2010":12.6},"presidentiel":{}}}]},{"code":"HU","nom":"Hongrie","statut":"opposition","note":"CAS EXCEPTIONNEL : Orbán défait en avril 2026 après 16 ans de pouvoir (Tisza/Magyar 53,6%). Fidesz reste 2e force avec 37,8%. Défaite sur la corruption et les libertés, pas sur l'immigration.","partis":[{"sigle":"Fidesz","nom":"Fidesz-KDNP","couleur":"#FF6600","statut_grille":"inclus","scores":{"europeen":{"2024":44.6,"2019":52.1,"2014":51.5,"2009":56.4},"legislatif":{"2026":37.8,"2022":54.1,"2018":49.3,"2014":45.0,"2010":52.7},"presidentiel":{}}}]},{"code":"ES","nom":"Espagne","statut":"opposition","note":"Fondé 2013. Pic 2019-2021, recul 2023. Sondages 2026 : ~17,7%. Position pro-immigration communautaire hispanique assumée — seul cas de distinction dans notre grille.","partis":[{"sigle":"Vox","nom":"Vox","couleur":"#63BE21","statut_grille":"inclus","scores":{"europeen":{"2024":9.7,"2019":6.2},"legislatif":{"2023":12.4,"2019":15.1,"2016":0.2},"presidentiel":{}}}]},{"code":"PL","nom":"Pologne","statut":"opposition","note":"A perdu le pouvoir en 2023 (Tusk). Reste 1er parti en voix. Contamination mainstream réussie : Tusk lui-même a durci sa ligne sur l'immigration.","partis":[{"sigle":"PiS","nom":"Prawo i Sprawiedliwość","couleur":"#003B8E","statut_grille":"inclus","scores":{"europeen":{"2024":34.1,"2019":45.4,"2014":32.1,"2009":27.4},"legislatif":{"2023":35.4,"2019":43.6,"2015":37.6,"2011":29.9},"presidentiel":{"2020":{"score":43.5,"type":"T1"},"2020_T2":{"score":51.0,"type":"T2_duel","note":"Duda vs Trzaskowski — victoire très serrée"},"2015":{"score":34.8,"type":"T1"},"2015_T2":{"score":51.5,"type":"T2_duel","note":"Duda vs Komorowski"}}}}]},{"code":"DK","nom":"Danemark","statut":"soutien","note":"CAS LE PLUS INTÉRESSANT : DF s'effondre car les Social-démocrates (Frederiksen) ont intégralement copié son programme migratoire. Victoire idéologique sans victoire électorale. DD = nouveau parti restrictif fondé par l'ex-ministre Støjberg.","partis":[{"sigle":"DF","nom":"Dansk Folkeparti","couleur":"#D40000","statut_grille":"nuance","scores":{"europeen":{"2024":2.5,"2019":10.8,"2014":26.6,"2009":15.3},"legislatif":{"2022":2.6,"2019":8.7,"2015":21.1,"2011":12.3,"2007":13.9},"presidentiel":{}}},{"sigle":"DD","nom":"Danmarksdemokraterne","couleur":"#C8102E","statut_grille":"inclus","scores":{"europeen":{"2024":7.4},"legislatif":{"2022":8.1},"presidentiel":{}}}]},{"code":"NO","nom":"Norvège","statut":"coalition","depuis":2025,"note":"Hors UE. A gouverné avec Solberg 2013-2021. Retour en coalition après les élections 2025. Parti pivot norvégien sur l'immigration depuis 20 ans.","partis":[{"sigle":"FrP","nom":"Fremskrittspartiet","couleur":"#003F8A","statut_grille":"inclus","scores":{"europeen":{},"legislatif":{"2025":18.8,"2021":11.6,"2017":15.2,"2013":16.3,"2009":22.9},"presidentiel":{}}}]},{"code":"FI","nom":"Finlande","statut":"coalition","depuis":2023,"note":"Au gouvernement (coalition Orpo) depuis 2023. 2e parti finlandais. Programme parmi les plus restrictifs d'Europe du Nord.","partis":[{"sigle":"PS","nom":"Perussuomalaiset (Vrais Finlandais)","couleur":"#002F6C","statut_grille":"inclus","scores":{"europeen":{"2024":11.5,"2019":13.8,"2014":12.9,"2009":9.8},"legislatif":{"2023":20.1,"2019":17.5,"2015":17.7,"2011":19.1},"presidentiel":{}}}]},{"code":"RO","nom":"Roumanie","statut":"opposition","note":"Fondé 2019. 2e parti aux législatives déc. 2024. Crise présidentielle 2024-2025 (Georgescu annulé). AUR + alliés = ~1/3 de l'électorat. Statut nuancé : rhétorique identitaire forte, liens ambigus avec sphère pro-russe.","partis":[{"sigle":"AUR","nom":"Alianța pentru Unirea Românilor","couleur":"#FFD700","statut_grille":"nuance","scores":{"europeen":{"2024":14.0},"legislatif":{"2024":18.0,"2020":9.1},"presidentiel":{}}}]},{"code":"EE","nom":"Estonie","statut":"opposition","note":"Fondé 2012. A gouverné en coalition 2019-2021. 2e parti en 2023. Position forte sur identité nationale et immigration.","partis":[{"sigle":"EKRE","nom":"Eesti Konservatiivne Rahvaerakond","couleur":"#003DA5","statut_grille":"inclus","scores":{"europeen":{"2024":14.4,"2019":12.7},"legislatif":{"2023":16.1,"2019":17.8,"2015":8.1},"presidentiel":{}}}]},{"code":"GR","nom":"Grèce","statut":"opposition","note":"Fondé 2016. Doublement aux européennes 2024. Position centrale : anti-immigration (frontière électrique Turquie, îles de rétention). Aube Dorée exclue (parti criminel condamné).","partis":[{"sigle":"EL","nom":"Ellinikí Lýsi (Solution grecque)","couleur":"#0D5EAF","statut_grille":"inclus","scores":{"europeen":{"2024":9.3,"2019":4.2},"legislatif":{"2023":4.4,"2019":3.7},"presidentiel":{}}}]},{"code":"HR","nom":"Croatie","statut":"opposition","note":"Domovinski pokret fondé 2018, émergent. Position identitaire et restrictive sur l'immigration, fonctionnement démocratique. À surveiller.","partis":[{"sigle":"DP","nom":"Domovinski pokret","couleur":"#FF0000","statut_grille":"nuance","scores":{"europeen":{"2024":9.0},"legislatif":{"2024":9.0,"2021":10.9},"presidentiel":{}}}]},{"code":"SK","nom":"Slovaquie","statut":"coalition","depuis":2023,"note":"SNS partenaire de Fico dans la coalition gouvernementale. Position anti-immigration présente mais secondaire. Smer (Fico) non retenu — posture géopolitique pro-Moscou primaire. SNS en limite de notre grille.","partis":[{"sigle":"SNS","nom":"Slovenská národná strana","couleur":"#0066CC","statut_grille":"nuance","scores":{"europeen":{"2024":2.8,"2019":4.1,"2014":3.6},"legislatif":{"2023":5.6,"2020":3.2,"2016":8.6,"2012":4.6},"presidentiel":{}}}]},{"code":"PT","nom":"Portugal","statut":"opposition","note":"Chega fondé 2019 par André Ventura. Montée spectaculaire : de 1,3% en 2019 à 18% en 2024. 3e parti portugais. Pro-européen, position restrictive explicite sur l'immigration.","partis":[{"sigle":"Chega","nom":"Chega","couleur":"#202056","statut_grille":"inclus","scores":{"europeen":{"2024":9.8,"2019":1.1},"legislatif":{"2024":18.0,"2022":7.2,"2019":1.3},"presidentiel":{"2021":{"score":11.9,"type":"T1","note":"Ventura — scrutin à un tour au Portugal"}}}}]},{"code":"LV","nom":"Lettonie","statut":"opposition","note":"Latvija pirmajā vietā (Lettonie d'abord) : parti national-conservateur fondé 2023, position restrictive sur l'immigration. Émergent. NA (Alliance nationale) documentée depuis 2010.","partis":[{"sigle":"NA","nom":"Nacionālā apvienība (Alliance nationale)","couleur":"#8B0000","statut_grille":"inclus","scores":{"europeen":{"2024":6.5,"2019":7.4,"2014":14.3,"2009":7.5},"legislatif":{"2022":9.3,"2018":11.0,"2014":16.6,"2011":13.9},"presidentiel":{}}}]},{"code":"LT","nom":"Lituanie","statut":"opposition","note":"Lietuvos valstiečių ir žaliųjų sąjunga (LVŽS, Union des Paysans et Verts) : populiste-conservateur, position restrictive sur l'immigration croissante. Au pouvoir 2016-2020, dans l'opposition depuis.","partis":[{"sigle":"LVŽS","nom":"Lietuvos valstiečių ir žaliųjų sąjunga","couleur":"#4B8B00","statut_grille":"nuance","scores":{"europeen":{"2024":8.3,"2019":12.5,"2014":6.6},"legislatif":{"2024":17.0,"2020":31.6,"2016":22.5},"presidentiel":{}}}]},{"code":"CZ","nom":"République tchèque","statut":"opposition","note":"SPD (Liberté et Démocratie directe) de Tomio Okamura : position restrictive explicite sur l'immigration. Eurosceptique. A connu un pic en 2017 (10,6%) et se maintient.","partis":[{"sigle":"SPD","nom":"Svoboda a přímá demokracie","couleur":"#C8001A","statut_grille":"inclus","scores":{"europeen":{"2024":6.0,"2019":9.1},"legislatif":{"2023":5.9,"2021":9.6,"2017":10.6},"presidentiel":{}}}]},{"code":"SI","nom":"Slovénie","statut":"opposition","note":"SDS (Parti démocrate slovène) de Janez Janša : droite conservatrice, position restrictive sur l'immigration. A gouverné 2020-2022. Proche du modèle Orbán dans son style.","partis":[{"sigle":"SDS","nom":"Slovenska demokratska stranka","couleur":"#003F8A","statut_grille":"inclus","scores":{"europeen":{"2024":23.5,"2019":26.3,"2014":24.9,"2009":26.9},"legislatif":{"2022":23.5,"2018":24.9,"2014":20.7,"2011":26.2},"presidentiel":{}}}]}]};
+
+  const DATA_BY_CODE = Object.fromEntries(UBD_DATA.pays.map(p => [p.code, p]));
+
+  /* ── 2. État courant ── */
+  let currentAnnee   = '2026';
+  let currentScrutin = 'tout';
+
+  /* ── 3. Palette de couleurs ── */
+  function scoreToColor(score) {
+    if (score === null || score === undefined || score < 5) return '#1A1A2E';
+    if (score < 15) return '#3D2B00';
+    if (score < 25) return '#7A5500';
+    if (score < 35) return '#C48A00';
+    if (score < 50) return '#D4820A';
+    return '#FFD700';
+  }
+
+  function scoreToGlow(score) {
+    if (!score || score < 5) return 'none';
+    if (score >= 50) return 'none'; /* pulsation CSS gère le glow */
+    const t = Math.min(score / 50, 1);
+    return `drop-shadow(0 0 ${(2 + t * 12).toFixed(1)}px rgba(255,180,0,${(0.25 + t * 0.55).toFixed(2)}))`;
+  }
+
+  /* ── 4. Calcul du score ── */
+  function getPartiResult(parti, scrutinTypes, maxYear) {
+    let best = null;
+    for (const type of scrutinTypes) {
+      const scores = parti.scores[type] || {};
+      const years = Object.keys(scores)
+        .filter(k => !k.includes('_'))
+        .map(Number)
+        .filter(y => !isNaN(y) && y <= maxYear)
+        .sort((a, b) => b - a);
+      if (!years.length) continue;
+      const year  = years[0];
+      const raw   = scores[String(year)];
+      const score = (raw !== null && typeof raw === 'object') ? raw.score : raw;
+      if (!best || year > best.year || (year === best.year && score > best.score))
+        best = { score, year, type };
+    }
+    return best
+      ? { score: best.score, year: best.year, type: best.type,
+          sigle: parti.sigle, nom: parti.nom, couleur: parti.couleur }
+      : null;
+  }
+
+  function getCountryResult(pays, annee, scrutin) {
+    const types = scrutin === 'tout'
+      ? ['europeen', 'legislatif', 'presidentiel']
+      : [scrutin];
+    const partis = pays.partis
+      .map(p => getPartiResult(p, types, +annee))
+      .filter(Boolean);
+    if (!partis.length) return null;
+    return { total: partis.reduce((s, p) => s + p.score, 0), partis };
+  }
+
+  /* ── 5. Mise à jour des couleurs ── */
+  const GOV_STATUTS = new Set(['pouvoir', 'coalition', 'gouvernement']);
+
+  function applyColors() {
+    d3.selectAll('#land-layer .country').each(function () {
+      const iso2   = this.getAttribute('data-iso2');
+      const pays   = DATA_BY_CODE[iso2];
+      const result = pays ? getCountryResult(pays, currentAnnee, currentScrutin) : null;
+      const score  = result ? result.total : 0;
+
+      /* Si le parti anti-immigration est au pouvoir (sous toute forme),
+         forcer l'affichage or + pulsation quelle que soit le score électoral */
+      const govForce  = result && pays && GOV_STATUTS.has(pays.statut)
+                        && (!pays.depuis || +currentAnnee >= pays.depuis);
+      const dispScore = govForce ? Math.max(score, 51) : score;
+
+      d3.select(this)
+        .transition().duration(300)
+        .attr('fill', scoreToColor(result ? dispScore : null))
+        .style('filter', scoreToGlow(dispScore));
+
+      this.classList.toggle('country-pulse', dispScore >= 50);
+    });
+  }
+
+  /* ── 6. Tooltip ── */
+  const SCRUTIN_LABELS = {
+    europeen: 'Européennes', legislatif: 'Législatives',
+    presidentiel: 'Présidentielle', tout: 'Récent', gouvernement: 'Gouvernement'
+  };
+  const STATUT_LABELS = {
+    pouvoir: 'Au pouvoir', coalition: 'En coalition', gouvernement: 'Au gouvernement',
+    soutien: 'Soutien parlementaire', 'aux portes du pouvoir': 'Aux portes du pouvoir',
+    minoritaire: 'Minoritaire', opposition: 'Opposition'
+  };
+
+  function buildTooltip(pays, result) {
+    if (!result) return `
+      <div class="tt-header">${pays.nom}</div>
+      <hr class="tt-divider">
+      <div class="tt-scrutin" style="font-style:italic">Pas de données pour cette sélection</div>`;
+
+    const refType = currentScrutin === 'tout' ? result.partis[0].type : currentScrutin;
+    const refYear = result.partis[0].year;
+
+    const partisHTML = result.partis.map(p => `
+      <div class="tt-parti">
+        <span class="tt-dot" style="background:${p.couleur}"></span>
+        <span class="tt-sigle">${p.sigle}</span>
+        <span class="tt-name">${p.nom}</span>
+        <span class="tt-score">${p.score.toFixed(1)}%</span>
+      </div>`).join('');
+
+    const noteHTML = pays.note
+      ? `<div class="tt-note">${pays.note}</div>` : '';
+
+    return `
+      <div class="tt-header">${pays.nom}
+        <span style="font-weight:300;opacity:.75"> — ${SCRUTIN_LABELS[refType] || refType} ${refYear}</span>
+      </div>
+      <hr class="tt-divider">
+      ${partisHTML}
+      <hr class="tt-divider">
+      <span class="tt-total">TOTAL : ${result.total.toFixed(1)}%</span>
+      <span class="tt-statut">${STATUT_LABELS[pays.statut] || pays.statut}</span>
+      ${noteHTML}`;
+  }
+
+  function positionTooltip(clientX, clientY) {
+    const tt = document.getElementById('tooltip');
+    const W  = window.innerWidth;
+    const H  = window.innerHeight;
+    const tw = tt.offsetWidth  || 260;
+    const th = tt.offsetHeight || 160;
+    tt.style.left = (clientX + 18 + tw > W ? clientX - tw - 18 : clientX + 18) + 'px';
+    tt.style.top  = (clientY - 10 + th > H ? H - th - 12      : clientY - 10)  + 'px';
+  }
+
+  const ISO2_NAMES = {
+    AL:'Albanie', AD:'Andorre', BA:'Bosnie-Herzégovine', BG:'Bulgarie',
+    BY:'Biélorussie', CY:'Chypre', VA:'Vatican', IE:'Irlande',
+    LI:'Liechtenstein', LU:'Luxembourg', MT:'Malte', MC:'Monaco',
+    MD:'Moldavie', ME:'Monténégro', SM:'Saint-Marin', RS:'Serbie',
+    UA:'Ukraine', MK:'Macédoine du Nord', XK:'Kosovo'
+  };
+
+  function setupTooltip() {
+    d3.selectAll('#land-layer .country')
+      .on('mousemove', function (event) {
+        const iso2 = this.getAttribute('data-iso2');
+        const pays = DATA_BY_CODE[iso2];
+        const tt   = document.getElementById('tooltip');
+        if (!pays) {
+          const nom = ISO2_NAMES[iso2];
+          if (!nom) return;
+          tt.innerHTML = `
+            <div class="tt-header">${nom}</div>
+            <hr class="tt-divider">
+            <div class="tt-scrutin" style="font-style:italic">Pas de données significatives.</div>`;
+          tt.classList.add('visible');
+          positionTooltip(event.clientX, event.clientY);
+          return;
+        }
+        const result = getCountryResult(pays, currentAnnee, currentScrutin);
+        tt.innerHTML = buildTooltip(pays, result);
+        tt.classList.add('visible');
+        positionTooltip(event.clientX, event.clientY);
+      })
+      .on('mouseleave', () => {
+        document.getElementById('tooltip').classList.remove('visible');
+      });
+  }
+
+  /* ── 7. Sélecteurs ── */
+  document.getElementById('sel-annee').addEventListener('change', e => {
+    currentAnnee = e.target.value;
+    applyColors();
+  });
+  document.getElementById('sel-scrutin').addEventListener('change', e => {
+    currentScrutin = e.target.value;
+    applyColors();
+  });
+
+  /* ── 8. Hook déclenché par render() ── */
+  window._ubdInit = function () {
+    applyColors();
+    setupTooltip();
+  };
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+{
+  "meta": {
+    "projet": "Une Bonne Droite — Carte de la résistance à la libre circulation des personnes en Europe",
+    "version": "2.1",
+    "date": "Mai 2026",
+    "description": "Partis à position restrictive sur la libre circulation des personnes (intra- et extra-communautaire), fonctionnant dans le cadre démocratique. Certains partis documentés sont pro-européens. Ce n'est pas une carte de l'extrême droite.",
+    "note_editoriale": "Sélection éditoriale UBD. Données électorales officielles. Mise à jour 2026.",
+    "grille_selection": {
+      "inclus": "Libre circulation des personnes comme axe politique restrictif central et explicite, fonctionnement démocratique parlementaire, pas d'antisémitisme comme ligne officielle non-reniée",
+      "exclus": "Antisémitisme documenté comme ligne de parti, refus du jeu démocratique, immigration secondaire dans le programme, posture géopolitique pro-Moscou primaire",
+      "nuance": "Parti en transition, contamination mainstream, parti émergent sans historique électoral suffisant"
+    },
+    "note_scores_belgique": "Scores VB sur collège flamand uniquement — Belgique scindée en collèges électoraux distincts",
+    "note_scores_uk": "Hors UE depuis 2020 — pas d'européennes post-2019. UKIP précurseur documenté pour la continuité historique.",
+    "methodologie_presidentielle": "Score affiché et comptabilisé dans le total = premier tour uniquement (T1). Second tour (T2_duel) = note contextuelle dans le tooltip, jamais additionné au total pays. Les scores T2 sont des duels contraints non comparables aux scores multipartites."
+  },
+  "pays": [
+    {
+      "code": "FR",
+      "nom": "France",
+      "statut": "opposition",
+      "note": "RN 1er parti de France. Présidentielle 2022 : Le Pen 41,5% au second tour face à Macron. Reconquête émergent depuis 2021.",
+      "partis": [
+        {
+          "sigle": "RN",
+          "nom": "Rassemblement National",
+          "couleur": "#003189",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": {
+              "2024": 31.4,
+              "2019": 23.3,
+              "2014": 24.9,
+              "2009": 6.3
+            },
+            "legislatif": {
+              "2024": 33.2,
+              "2022": 18.7,
+              "2017": 13.2
+            },
+            "presidentiel": {
+              "2022": { "score": 23.1, "type": "T1" },
+              "2022_T2": { "score": 41.5, "type": "T2_duel", "note": "Le Pen vs Macron — reports partiels depuis Reconquête" },
+              "2017": { "score": 21.3, "type": "T1" },
+              "2017_T2": { "score": 33.9, "type": "T2_duel", "note": "Le Pen vs Macron" },
+              "2012": { "score": 17.9, "type": "T1" }
+            }
+          }
+        },
+        {
+          "sigle": "RCQ",
+          "nom": "Reconquête",
+          "couleur": "#1B4D8E",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": {
+              "2024": 5.5
+            },
+            "legislatif": {
+              "2024": 5.0,
+              "2022": 4.2
+            },
+            "presidentiel": {
+              "2022": { "score": 7.1, "type": "T1", "note": "Zemmour — pas présent au T2, reports massifs vers RN" }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "DE",
+      "nom": "Allemagne",
+      "statut": "opposition",
+      "note": "Fondé 2013. Cordon sanitaire de tous les autres partis (Brandmauer). Thüringen 2024 : 32,8% (1er parti). 2e force au Bundestag 2025.",
+      "partis": [
+        {
+          "sigle": "AfD",
+          "nom": "Alternative für Deutschland",
+          "couleur": "#009DE0",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 15.9, "2019": 11.0, "2014": 7.1 },
+            "legislatif": { "2025": 20.8, "2021": 10.3, "2017": 12.6 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "GB",
+      "nom": "Royaume-Uni",
+      "statut": "opposition",
+      "note": "Hors UE depuis 2020. 14,3% en 2024 = 3e score national, seulement 5 sièges (scrutin uninominal). UKIP précurseur. Restore Britain : émergent, 100% dans un seul comté en 2025.",
+      "partis": [
+        {
+          "sigle": "UKIP",
+          "nom": "UK Independence Party (précurseur)",
+          "couleur": "#70147A",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2014": 26.6, "2009": 16.1 },
+            "legislatif": { "2015": 12.6, "2010": 3.1 },
+            "presidentiel": {}
+          }
+        },
+        {
+          "sigle": "REFUK",
+          "nom": "Reform UK",
+          "couleur": "#12B6CF",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": {},
+            "legislatif": { "2024": 14.3, "2019": 2.0 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "IT",
+      "nom": "Italie",
+      "statut": "pouvoir",
+      "note": "Meloni PM depuis 2022. Lega en chute après le pic de 2019 — transfert d'électorat vers FdI. Cas de substitution interne.",
+      "partis": [
+        {
+          "sigle": "FdI",
+          "nom": "Fratelli d'Italia",
+          "couleur": "#0D5C8A",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 28.9, "2019": 6.4, "2014": 3.7, "2009": 6.5 },
+            "legislatif": { "2022": 26.0, "2018": 4.4, "2013": 1.9 },
+            "presidentiel": {}
+          }
+        },
+        {
+          "sigle": "Lega",
+          "nom": "Lega",
+          "couleur": "#009246",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 9.1, "2019": 34.3, "2014": 6.2, "2009": 10.2 },
+            "legislatif": { "2022": 8.8, "2018": 17.4, "2013": 4.1 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "AT",
+      "nom": "Autriche",
+      "statut": "opposition",
+      "note": "1er parti NRW 2024 (28,8%) mais exclu de la coalition — cordon sanitaire autrichien. Sondages 2026 : 34%. Record historique absolu.",
+      "partis": [
+        {
+          "sigle": "FPÖ",
+          "nom": "Freiheitliche Partei Österreichs",
+          "couleur": "#005B99",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 25.4, "2019": 17.2, "2014": 19.7, "2009": 12.7 },
+            "legislatif": { "2024": 28.8, "2019": 16.2, "2017": 26.0, "2013": 20.5 },
+            "presidentiel": {
+              "2022": { "score": 19.7, "type": "T1" },
+              "2016": { "score": 35.1, "type": "T1" },
+              "2016_T2": { "score": 46.2, "type": "T2_duel", "note": "Hofer vs Van der Bellen — résultat annulé puis reconfirmé 53,8% Van der Bellen" }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "CH",
+      "nom": "Suisse",
+      "statut": "gouvernement",
+      "note": "Hors UE. 1er parti suisse depuis 20 ans. A imposé sa ligne immigration à tout le paysage politique suisse. Sondages 2026 : ~30%. Cas hégémonique.",
+      "partis": [
+        {
+          "sigle": "SVP",
+          "nom": "Union Démocratique du Centre (SVP/UDC)",
+          "couleur": "#3B7D23",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": {},
+            "legislatif": { "2023": 27.9, "2019": 25.6, "2015": 29.4, "2011": 26.6 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "NL",
+      "nom": "Pays-Bas",
+      "statut": "coalition",
+      "note": "Wilders au pouvoir dans la coalition Schoof (2024). Victoire historique 2023 : doublement du score. Score européennes 2019 bas = boycott partiel.",
+      "partis": [
+        {
+          "sigle": "PVV",
+          "nom": "Partij voor de Vrijheid",
+          "couleur": "#003082",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 17.9, "2019": 3.5, "2014": 13.3, "2009": 17.0 },
+            "legislatif": { "2023": 23.5, "2021": 10.8, "2017": 13.1, "2012": 10.1, "2010": 15.5 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "SE",
+      "nom": "Suède",
+      "statut": "soutien",
+      "note": "2e parti suédois. Soutient le gouvernement Kristersson (Tidö Agreement) sans en faire partie — influence directe sur politique migratoire. Recul aux européennes 2024 vs législatives.",
+      "partis": [
+        {
+          "sigle": "SD",
+          "nom": "Sverigedemokraterna",
+          "couleur": "#FFCD00",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 13.2, "2019": 15.3, "2014": 9.7, "2009": 3.3 },
+            "legislatif": { "2022": 20.5, "2018": 17.5, "2014": 12.9, "2010": 5.7 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "BE",
+      "nom": "Belgique",
+      "statut": "opposition",
+      "note": "Scores sur collège flamand uniquement. 1er parti de Flandre aux européennes 2024. Cordon sanitaire maintenu. A connu un effondrement 2010-2018 dû à la N-VA, puis renaissance spectaculaire.",
+      "partis": [
+        {
+          "sigle": "VB",
+          "nom": "Vlaams Belang",
+          "couleur": "#FFD700",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 23.1, "2019": 11.0, "2014": 5.9, "2009": 15.3 },
+            "legislatif": { "2024": 21.8, "2019": 18.5, "2014": 5.9, "2010": 12.6 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "HU",
+      "nom": "Hongrie",
+      "statut": "opposition",
+      "note": "CAS EXCEPTIONNEL : Orbán défait en avril 2026 après 16 ans de pouvoir (Tisza/Magyar 53,6%). Fidesz reste 2e force avec 37,8%. Défaite sur la corruption et les libertés, pas sur l'immigration.",
+      "partis": [
+        {
+          "sigle": "Fidesz",
+          "nom": "Fidesz-KDNP",
+          "couleur": "#FF6600",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 44.6, "2019": 52.1, "2014": 51.5, "2009": 56.4 },
+            "legislatif": { "2026": 37.8, "2022": 54.1, "2018": 49.3, "2014": 45.0, "2010": 52.7 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "ES",
+      "nom": "Espagne",
+      "statut": "opposition",
+      "note": "Fondé 2013. Pic 2019-2021, recul 2023. Sondages 2026 : ~17,7%. Position pro-immigration communautaire hispanique assumée — seul cas de distinction dans notre grille.",
+      "partis": [
+        {
+          "sigle": "Vox",
+          "nom": "Vox",
+          "couleur": "#63BE21",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 9.7, "2019": 6.2 },
+            "legislatif": { "2023": 12.4, "2019": 15.1, "2016": 0.2 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "PL",
+      "nom": "Pologne",
+      "statut": "opposition",
+      "note": "A perdu le pouvoir en 2023 (Tusk). Reste 1er parti en voix. Contamination mainstream réussie : Tusk lui-même a durci sa ligne sur l'immigration.",
+      "partis": [
+        {
+          "sigle": "PiS",
+          "nom": "Prawo i Sprawiedliwość",
+          "couleur": "#003B8E",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 34.1, "2019": 45.4, "2014": 32.1, "2009": 27.4 },
+            "legislatif": { "2023": 35.4, "2019": 43.6, "2015": 37.6, "2011": 29.9 },
+            "presidentiel": {
+              "2020": { "score": 43.5, "type": "T1" },
+              "2020_T2": { "score": 51.0, "type": "T2_duel", "note": "Duda vs Trzaskowski — victoire très serrée" },
+              "2015": { "score": 34.8, "type": "T1" },
+              "2015_T2": { "score": 51.5, "type": "T2_duel", "note": "Duda vs Komorowski" }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "DK",
+      "nom": "Danemark",
+      "statut": "soutien",
+      "note": "CAS LE PLUS INTÉRESSANT : DF s'effondre car les Social-démocrates (Frederiksen) ont intégralement copié son programme migratoire. Victoire idéologique sans victoire électorale. DD = nouveau parti restrictif fondé par l'ex-ministre Støjberg.",
+      "partis": [
+        {
+          "sigle": "DF",
+          "nom": "Dansk Folkeparti",
+          "couleur": "#D40000",
+          "statut_grille": "nuance",
+          "scores": {
+            "europeen": { "2024": 2.5, "2019": 10.8, "2014": 26.6, "2009": 15.3 },
+            "legislatif": { "2022": 2.6, "2019": 8.7, "2015": 21.1, "2011": 12.3, "2007": 13.9 },
+            "presidentiel": {}
+          }
+        },
+        {
+          "sigle": "DD",
+          "nom": "Danmarksdemokraterne",
+          "couleur": "#C8102E",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 7.4 },
+            "legislatif": { "2022": 8.1 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "NO",
+      "nom": "Norvège",
+      "statut": "coalition",
+      "note": "Hors UE. A gouverné avec Solberg 2013-2021. Retour en coalition après les élections 2025. Parti pivot norvégien sur l'immigration depuis 20 ans.",
+      "partis": [
+        {
+          "sigle": "FrP",
+          "nom": "Fremskrittspartiet",
+          "couleur": "#003F8A",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": {},
+            "legislatif": { "2025": 18.8, "2021": 11.6, "2017": 15.2, "2013": 16.3, "2009": 22.9 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "FI",
+      "nom": "Finlande",
+      "statut": "coalition",
+      "note": "Au gouvernement (coalition Orpo) depuis 2023. 2e parti finlandais. Programme parmi les plus restrictifs d'Europe du Nord.",
+      "partis": [
+        {
+          "sigle": "PS",
+          "nom": "Perussuomalaiset (Vrais Finlandais)",
+          "couleur": "#002F6C",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 11.5, "2019": 13.8, "2014": 12.9, "2009": 9.8 },
+            "legislatif": { "2023": 20.1, "2019": 17.5, "2015": 17.7, "2011": 19.1 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "RO",
+      "nom": "Roumanie",
+      "statut": "opposition",
+      "note": "Fondé 2019. 2e parti aux législatives déc. 2024. Crise présidentielle 2024-2025 (Georgescu annulé). AUR + alliés = ~1/3 de l'électorat. Statut nuancé : rhétorique identitaire forte, liens ambigus avec sphère pro-russe.",
+      "partis": [
+        {
+          "sigle": "AUR",
+          "nom": "Alianța pentru Unirea Românilor",
+          "couleur": "#FFD700",
+          "statut_grille": "nuance",
+          "scores": {
+            "europeen": { "2024": 14.0 },
+            "legislatif": { "2024": 18.0, "2020": 9.1 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "EE",
+      "nom": "Estonie",
+      "statut": "opposition",
+      "note": "Fondé 2012. A gouverné en coalition 2019-2021. 2e parti en 2023. Position forte sur identité nationale et immigration.",
+      "partis": [
+        {
+          "sigle": "EKRE",
+          "nom": "Eesti Konservatiivne Rahvaerakond",
+          "couleur": "#003DA5",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 14.4, "2019": 12.7 },
+            "legislatif": { "2023": 16.1, "2019": 17.8, "2015": 8.1 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "GR",
+      "nom": "Grèce",
+      "statut": "opposition",
+      "note": "Fondé 2016. Doublement aux européennes 2024. Position centrale : anti-immigration (frontière électrique Turquie, îles de rétention). Aube Dorée exclue (parti criminel condamné).",
+      "partis": [
+        {
+          "sigle": "EL",
+          "nom": "Ellinikí Lýsi (Solution grecque)",
+          "couleur": "#0D5EAF",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 9.3, "2019": 4.2 },
+            "legislatif": { "2023": 4.4, "2019": 3.7 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "HR",
+      "nom": "Croatie",
+      "statut": "opposition",
+      "note": "Domovinski pokret fondé 2018, émergent. Position identitaire et restrictive sur l'immigration, fonctionnement démocratique. À surveiller.",
+      "partis": [
+        {
+          "sigle": "DP",
+          "nom": "Domovinski pokret",
+          "couleur": "#FF0000",
+          "statut_grille": "nuance",
+          "scores": {
+            "europeen": { "2024": 9.0 },
+            "legislatif": { "2024": 9.0, "2021": 10.9 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "SK",
+      "nom": "Slovaquie",
+      "statut": "coalition",
+      "note": "SNS partenaire de Fico dans la coalition gouvernementale. Position anti-immigration présente mais secondaire. Smer (Fico) non retenu — posture géopolitique pro-Moscou primaire. SNS en limite de notre grille.",
+      "partis": [
+        {
+          "sigle": "SNS",
+          "nom": "Slovenská národná strana",
+          "couleur": "#0066CC",
+          "statut_grille": "nuance",
+          "scores": {
+            "europeen": { "2024": 2.8, "2019": 4.1, "2014": 3.6 },
+            "legislatif": { "2023": 5.6, "2020": 3.2, "2016": 8.6, "2012": 4.6 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "PT",
+      "nom": "Portugal",
+      "statut": "opposition",
+      "note": "Chega fondé 2019 par André Ventura. Montée spectaculaire : de 1,3% en 2019 à 18% en 2024. 3e parti portugais. Pro-européen, position restrictive explicite sur l'immigration.",
+      "partis": [
+        {
+          "sigle": "Chega",
+          "nom": "Chega",
+          "couleur": "#202056",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 9.8, "2019": 1.1 },
+            "legislatif": { "2024": 18.0, "2022": 7.2, "2019": 1.3 },
+            "presidentiel": {
+              "2021": { "score": 11.9, "type": "T1", "note": "Ventura — scrutin à un tour au Portugal" }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "LV",
+      "nom": "Lettonie",
+      "statut": "opposition",
+      "note": "Latvija pirmajā vietā (Lettonie d'abord) : parti national-conservateur fondé 2023, position restrictive sur l'immigration. Émergent. NA (Alliance nationale) documentée depuis 2010.",
+      "partis": [
+        {
+          "sigle": "NA",
+          "nom": "Nacionālā apvienība (Alliance nationale)",
+          "couleur": "#8B0000",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 6.5, "2019": 7.4, "2014": 14.3, "2009": 7.5 },
+            "legislatif": { "2022": 9.3, "2018": 11.0, "2014": 16.6, "2011": 13.9 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "LT",
+      "nom": "Lituanie",
+      "statut": "opposition",
+      "note": "Lietuvos valstiečių ir žaliųjų sąjunga (LVŽS, Union des Paysans et Verts) : populiste-conservateur, position restrictive sur l'immigration croissante. Au pouvoir 2016-2020, dans l'opposition depuis.",
+      "partis": [
+        {
+          "sigle": "LVŽS",
+          "nom": "Lietuvos valstiečių ir žaliųjų sąjunga",
+          "couleur": "#4B8B00",
+          "statut_grille": "nuance",
+          "scores": {
+            "europeen": { "2024": 8.3, "2019": 12.5, "2014": 6.6 },
+            "legislatif": { "2024": 17.0, "2020": 31.6, "2016": 22.5 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "CZ",
+      "nom": "République tchèque",
+      "statut": "opposition",
+      "note": "SPD (Liberté et Démocratie directe) de Tomio Okamura : position restrictive explicite sur l'immigration. Eurosceptique. A connu un pic en 2017 (10,6%) et se maintient.",
+      "partis": [
+        {
+          "sigle": "SPD",
+          "nom": "Svoboda a přímá demokracie",
+          "couleur": "#C8001A",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 6.0, "2019": 9.1 },
+            "legislatif": { "2023": 5.9, "2021": 9.6, "2017": 10.6 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    },
+    {
+      "code": "SI",
+      "nom": "Slovénie",
+      "statut": "opposition",
+      "note": "SDS (Parti démocrate slovène) de Janez Janša : droite conservatrice, position restrictive sur l'immigration. A gouverné 2020-2022. Proche du modèle Orbán dans son style.",
+      "partis": [
+        {
+          "sigle": "SDS",
+          "nom": "Slovenska demokratska stranka",
+          "couleur": "#003F8A",
+          "statut_grille": "inclus",
+          "scores": {
+            "europeen": { "2024": 23.5, "2019": 26.3, "2014": 24.9, "2009": 26.9 },
+            "legislatif": { "2022": 23.5, "2018": 24.9, "2014": 20.7, "2011": 26.2 },
+            "presidentiel": {}
+          }
+        }
+      ]
+    }
+  ],
+  "pays_non_retenus": [
+    {
+      "code": "IE",
+      "nom": "Irlande",
+      "raison": "Aucun parti restrictif sur l'immigration n'a de représentation parlementaire significative. Irish Freedom Party, National Party, Ireland First : tous <2% aux législatives 2024. Marché émergent sans traduction électorale structurée. À reconsidérer à partir de 2029."
+    },
+    {
+      "code": "IS",
+      "nom": "Islande",
+      "raison": "Miðflokkurinn (Centre, Gunnlaugsson) est conservateur-populiste et eurosceptique mais l'immigration n'est pas son axe central. Aucun parti correspondant à notre grille n'est identifiable."
+    },
+    {
+      "code": "AL",
+      "nom": "Albanie",
+      "raison": "Pays d'émigration massive, pas d'immigration. Le Parti Démocratique (Berisha) est centre-droit classique, candidat à l'UE — l'immigration de masse n'est pas un sujet politique albanais structuré."
+    },
+    {
+      "code": "BG",
+      "nom": "Bulgarie",
+      "parti_exclu": "Vazrazhdane (Возраждане)",
+      "raison": "Posture géopolitique pro-Moscou primaire, accords de coopération avec Russie Unie (2025). Anti-immigration secondaire. Exclu selon notre grille."
+    },
+    {
+      "code": "LU",
+      "nom": "Luxembourg",
+      "raison": "ADR (Alternative Démocratique Réformatrice) : conservateur, sceptique sur l'immigration mais pas comme axe central. Score trop marginal (~9%) et pays trop petit pour peser dans la représentation cartographique."
+    },
+    {
+      "code": "MT",
+      "nom": "Malte",
+      "raison": "Pas de parti correspondant à notre grille avec représentation significative."
+    },
+    {
+      "code": "CY",
+      "nom": "Chypre",
+      "raison": "ELAM (Mouvement national populaire) : position identitaire forte mais liens historiques avec extrême droite grecque. Score faible (~5%). À réévaluer."
+    }
+  ],
+  "pays_exclus_grille": [
+    {
+      "code": "GR",
+      "parti": "Aube Dorée (Chrysí Avgí)",
+      "raison_exclusion": "Parti criminel condamné. Dirigeants en prison pour direction d'organisation criminelle."
+    },
+    {
+      "code": "GR",
+      "parti": "Spartiates",
+      "raison_exclusion": "Façade de Kasidiaris (Aube Dorée), interdit aux européennes 2024 par décision de justice."
+    },
+    {
+      "code": "SK",
+      "parti": "Smer (Fico)",
+      "raison_exclusion": "Posture géopolitique pro-Moscou primaire. Immigration secondaire dans le programme."
+    },
+    {
+      "code": "BG",
+      "parti": "Vazrazhdane (Возраждане)",
+      "raison_exclusion": "Posture géopolitique pro-Moscou primaire. Accords de coopération avec Russie Unie (2025)."
+    }
+  ],
+  "changelog": {
+    "v2.0_mai2026": [
+      "Ajout Portugal (Chega) — omission majeure corrigée",
+      "Ajout Lettonie (Alliance nationale)",
+      "Ajout Lituanie (LVŽS, nuancé)",
+      "Ajout République tchèque (SPD)",
+      "Ajout Slovénie (SDS)",
+      "Irlande, Islande, Albanie : documentés comme non retenus avec justification",
+      "Bulgarie, Luxembourg, Malte, Chypre : documentés comme non retenus",
+      "Belgique VB : scores 2009 et 2014 corrigés (effondrement dû à N-VA documenté)",
+      "Danemark DD : score européennes 2024 ajouté (7,4%)",
+      "France RCQ : score présidentielle 2022 ajouté (7,1%)",
+      "Norvège FrP : score 2009 ajouté (22,9%), 2025 ajouté (18,8%)",
+      "UK : UKIP ajouté comme précurseur historique pour continuité 2009-2015",
+      "Italie : scores 2013 ajoutés pour FdI et Lega",
+      "Autriche FPÖ : score législatif 2013 ajouté",
+      "Pays-Bas PVV : scores 2010 et 2012 ajoutés",
+      "Suède SD : score 2010 ajouté",
+      "Note éditoriale mise à jour : libre circulation des personnes (pas uniquement extra-européenne)"
+    ],
+    "v2.1_mai2026": [
+      "Correction méthodologique majeure : séparation T1 (score réel) / T2_duel (note contextuelle)",
+      "France RN : 2022 T1=23,1% (pas 41,5%) — T2 en note seulement",
+      "France RCQ : 2022 T1=7,1% — total France affiché ~30% et non ~50%",
+      "France RN : 2017 T1=21,3% corrigé (était 33,9% T2)",
+      "Autriche FPÖ : 2016 T1=35,1% / T2=46,2% en note",
+      "Pologne PiS : 2020 T1=43,5% / T2=51% en note ; 2015 T1=34,8% / T2=51,5% en note",
+      "Portugal Chega : 2021 T1=11,9% confirmé (scrutin à un tour)"
+    ]
+  }
+}

@@ -1,0 +1,135 @@
+[
+  {
+    "code": "FR",
+    "nom": "France",
+    "statut": "aux portes du pouvoir",
+    "note": "RN 1er parti de France. Reconquête créé en 2021."
+  },
+  {
+    "code": "DE",
+    "nom": "Allemagne",
+    "statut": "minoritaire",
+    "note": "Fondé 2013. Thüringen 2024 : 32,8% (1er parti). 2e force au Bundestag 2025."
+  },
+  {
+    "code": "GB",
+    "nom": "Royaume-Uni",
+    "statut": "minoritaire",
+    "note": "Hors UE depuis 2020 — pas d'européennes. Reform UK obtenait 14,3% en 2024 = 3e score national. Restore Britain créé en 2026"
+  },
+  {
+    "code": "IT",
+    "nom": "Italie",
+    "statut": "pouvoir",
+    "depuis": 2022,
+    "note": "Meloni PM depuis 2022. Transfert d'électorat de Lega vers FdI."
+  },
+  {
+    "code": "AT",
+    "nom": "Autriche",
+    "statut": "aux portes du pouvoir",
+    "note": "1er parti NRW 2024 (28,8%) mais exclu de la coalition. Sondages 2026 : 34%. Record historique."
+  },
+  {
+    "code": "CH",
+    "nom": "Suisse",
+    "statut": "pouvoir",
+    "note": "1er parti suisse depuis 20 ans sur une ligne anti-immigration."
+  },
+  {
+    "code": "NL",
+    "nom": "Pays-Bas",
+    "statut": "pouvoir",
+    "depuis": 2024,
+    "note": "Wilders au pouvoir dans la coalition Schoof (2024)."
+  },
+  {
+    "code": "SE",
+    "nom": "Suède",
+    "statut": "aux portes du pouvoir",
+    "depuis": 2022,
+    "note": "2e parti suédois. Soutient le gouvernement sans en faire partie — influence directe sur politique migratoire."
+  },
+  {
+    "code": "BE",
+    "nom": "Belgique",
+    "statut": "minoritaire",
+    "note": "Score sur collège flamand uniquement (hors Wallonie). 1er parti de Flandre aux européennes 2024."
+  },
+  {
+    "code": "HU",
+    "nom": "Hongrie",
+    "statut": "pouvoir",
+    "note": "Orbán a perdu en avril 2026 après 16 ans de pouvoir au profit de Tisza ; les deux partis sont anti-immigration."
+  },
+  {
+    "code": "ES",
+    "nom": "Espagne",
+    "statut": "minoritaire",
+    "note": "Fondé 2013. Sondages 2026 : ~17,7%."
+  },
+  {
+    "code": "PL",
+    "nom": "Pologne",
+    "statut": "pouvoir",
+    "depuis": 2023,
+    "note": "Le parti historique a perdu au profit de Tusk. Les deux sont anti-immigration."
+  },
+  {
+    "code": "DK",
+    "nom": "Danemark",
+    "statut": "pouvoir",
+    "depuis": 2022,
+    "note": "La gauche des Social-démocrates (Frederiksen) sont anti-immigration."
+  },
+  {
+    "code": "NO",
+    "nom": "Norvège",
+    "statut": "minoritaire",
+    "note": "Hors UE. A gouverné avec Solberg 2013-2021."
+  },
+  {
+    "code": "FI",
+    "nom": "Finlande",
+    "statut": "pouvoir",
+    "depuis": 2023,
+    "note": "Au gouvernement (coalition Orpo) depuis 2023. 2e parti finlandais."
+  },
+  {
+    "code": "RO",
+    "nom": "Roumanie",
+    "statut": "minoritaire",
+    "note": "Fondé 2019. 2e parti aux législatives déc. 2024. Crise présidentielle 2024-2025 (Georgescu annulé). AUR + alliés = ~1/3 de l'électorat."
+  },
+  {
+    "code": "EE",
+    "nom": "Estonie",
+    "statut": "minoritaire",
+    "note": "Fondé 2012. A gouverné en coalition 2019-2021, 2e parti depuis."
+  },
+  {
+    "code": "GR",
+    "nom": "Grèce",
+    "statut": "minoritaire",
+    "note": "Fondé 2016. Doublement aux européennes 2024."
+  },
+  {
+    "code": "HR",
+    "nom": "Croatie",
+    "statut": "minorité",
+    "note": "Parti créé en 2020."
+  },
+  {
+    "code": "SK",
+    "nom": "Slovaquie",
+    "statut": "pouvoir",
+    "depuis": 2023,
+    "note": "En coalition."
+  },
+  {
+    "code": "PT",
+    "nom": "Portugal",
+    "statut": "minoritaire",
+    "note": "Parti fondé en 2019 par André Ventura. 2e parti aux législatives mars 2024 avec 18,1%."
+  }
+]
